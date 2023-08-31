@@ -3,6 +3,8 @@
   --text-color: #000;
   --border-color: #d0d7de;
   --white-color: #ffffff;
+  --light-shade-color: #9d62f3;
+  --dark-shade-color: #644ad1;
 }
 
 body {
@@ -46,7 +48,7 @@ body {
 
 .search-bar button {
   padding: 11px 20px;
-  background: linear-gradient(180deg, #8665d3, #53389e);
+  background: linear-gradient(180deg, var(--light-shade-color), var(--dark-shade-color));
   border: none;
   border-radius: 5px;
   color: var(--white-color);
@@ -55,7 +57,7 @@ body {
 }
 
 .search-bar button:hover {
-  background: linear-gradient(180deg, #53389e, #8665d3);
+  background: linear-gradient(180deg, var(--dark-shade-color), var(--light-shade-color));
 }
 
 section {
@@ -177,6 +179,9 @@ section {
   border-radius: 10px;
   border: 1px solid var(--border-color);
   width: 200px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 
 .user-cell h3 {
@@ -209,6 +214,7 @@ section {
   border-radius: 10px;
   color: gray;
   border: 1px solid var(--border-color);
+  z-index: 10;
 }
 
 @media only screen and (width < 400px) {

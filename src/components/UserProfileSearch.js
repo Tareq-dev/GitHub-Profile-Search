@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FiSearch } from 'react-icons/fi';
 import { GoOrganization, GoPeople, GoPersonAdd, GoRepo, GoLink, GoLocation, GoMail, GoBrowser, GoMention } from 'react-icons/go';
 import './UserProfileSearch.css';
 
 const UserProfileSearch = () => {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(localStorage.getItem('previousSearch') || '');
   const [userProfile, setUserProfile] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -21,11 +20,40 @@ const UserProfileSearch = () => {
     }
   };
 
+  const convertURL = inputURL => {
+    // Extracting username and tabname using regEx
+    const regex = /\/users\/([a-zA-Z]+)\/([a-zA-Z]+)(?:{\/[a-zA-Z_]+})?/;
+    const match = inputURL.match(regex);
+
+    if (match) {
+      const username = match[1];
+      let tabname = match[2];
+
+      if (tabname === 'repos') {
+        tabname = 'repositories';
+      }
+      else {
+        tabname = match[2];
+      }
+
+      // Construct the desired output URL
+      window.location.href = `https://github.com/${username}?tab=${tabname}`;
+    }
+    else {
+      alert('Invalid input URL');
+    }
+  }
+
+  useEffect(() => {
+    // Store the username in localStorage whenever it changes
+    localStorage.setItem('previousSearch', username);
+  }, [username]); // This effect runs whenever username changes
+
   return (
     <>
       <div className='search-bar'>
         <div className='search'>
-          <FiSearch />
+          <GoMention />
           <input
             type='text'
             placeholder='Enter GitHub username'
@@ -45,7 +73,7 @@ const UserProfileSearch = () => {
               <span className='user-type'>{userProfile.type}</span>
               <small className='user-created'>Created at: {userProfile.created_at.slice(0, 10)}</small>
               <div className='user-info'>
-                <img src={userProfile.avatar_url} alt="" />
+                <img src={userProfile.avatar_url} alt="avatar profile" />
                 <div className='user-name'>
                   <h2 className='user-h2-tag'>{userProfile.name}</h2>
                   <div className='user-additional'>
@@ -53,7 +81,7 @@ const UserProfileSearch = () => {
                   </div>
                 </div>
               </div>
-              <p className='user-p-tag'>{userProfile.bio}</p>
+              <p className='user-p-tag'>{userProfile.bio !== null ? (<p>{userProfile.bio}</p>) : 'Bio not mentioned'}</p>
               <div className='user-additional-container'>
                 <div className='user-additional'>
                   <GoOrganization />
@@ -76,28 +104,8 @@ const UserProfileSearch = () => {
             </div>
 
             <div className='user-cells-container'>
-              {/* Followers */}
-              <div className='user-cell'>
-                <div className='cell-icons'>
-                  <GoPeople />
-                </div>
-                <div className='user-cell-titles'>
-                  <h3>{userProfile.followers}</h3>
-                  <p className='user-p-tag'>Followers</p>
-                </div>
-              </div>
-              {/* Following */}
-              <div className='user-cell'>
-                <div className='cell-icons'>
-                  <GoPersonAdd />
-                </div>
-                <div className='user-cell-titles'>
-                  <h3>{userProfile.following}</h3>
-                  <p className='user-p-tag'>Following</p>
-                </div>
-              </div>
               {/* Repo */}
-              <div className='user-cell'>
+              <buttion onClick={() => convertURL(userProfile.repos_url)} target='__blank' className='user-cell'>
                 <div className='cell-icons'>
                   <GoRepo />
                 </div>
@@ -105,12 +113,34 @@ const UserProfileSearch = () => {
                   <h3>{userProfile.public_repos}</h3>
                   <p className='user-p-tag'>Repositories</p>
                 </div>
-              </div>
+              </buttion>
+              {/* Followers */}
+              <buttion onClick={() => convertURL(userProfile.followers_url)} target='__blank' className='user-cell'>
+                <div className='cell-icons'>
+                  <GoPeople />
+                </div>
+                <div className='user-cell-titles'>
+                  <h3>{userProfile.followers}</h3>
+                  <p className='user-p-tag'>Followers</p>
+                </div>
+              </buttion>
+              {/* Following */}
+              <buttion onClick={() => convertURL(userProfile.following_url)} target='__blank' className='user-cell'>
+                <div className='cell-icons'>
+                  <GoPersonAdd />
+                </div>
+                <div className='user-cell-titles'>
+                  <h3>{userProfile.following}</h3>
+                  <p className='user-p-tag'>Following</p>
+                </div>
+              </buttion>
+
             </div>
           </div>
         )}
       </section>) : (
-        <p className='warning'>{errorMessage || 'Find GitHub Profiles'}</p>)}
+        <p className='warning'>{errorMessage || 'Find GitHub Profiles'}</p>)
+      }
     </>
   );
 };
