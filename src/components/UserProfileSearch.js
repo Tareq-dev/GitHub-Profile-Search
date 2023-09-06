@@ -49,31 +49,39 @@ const UserProfileSearch = () => {
     localStorage.setItem('previousSearch', username);
   }, [username]); // This effect runs whenever username changes
 
+
+  const [darkModeToggle, setDarkModeToggle] = useState(false);
   return (
     <>
-      <div className='search-bar'>
-        <div className='search'>
+      <label class="toggleDarkBtn">
+        <input type="checkbox" onClick={() => setDarkModeToggle(!darkModeToggle)} />
+        <span class="slideBtnTg round">Toggle Mode</span>
+      </label>
+
+      <div className='search-bar flex justify-center items-center gap-[10px] m-[20px]'>
+        <div className='search flex justify-start items-center gap-[5px] bg-transparent border-[2px] border-[#d0d7de] rounded p-[10px] w-[300px] focus-within:bg-[#ffffff] focus-within:border-[#0969DA]'>
           <GoMention />
           <input
             type='text'
             placeholder='Enter GitHub username'
-            className='search-input'
+            className='search-input bg-transparent outline-none w-[100%]'
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
 
-        <button onClick={fetchUserProfile}>Search</button>
+        <button className='text-[#ffffff] py-[11px] px-[20px] rounded font-inharit bg-gradient-to-b from-[#9d62f3] to-[#644ad1] hover:bg-gradient-to-t' onClick={fetchUserProfile}>Search</button>
       </div>
 
-      {userProfile ? (<section>
+
+      {userProfile ? (<section className={`flex justify-center items-center min-h-[80vh] my-0 mx-[1rem] text-[#000000] dark:text-[#ffffff] ${darkModeToggle && "dark"}`}>
         {userProfile && (
-          <div className='card-section'>
-            <div className='user-info-container'>
-              <span className='user-type'>{userProfile.type}</span>
-              <small className='user-created'>Created at: {userProfile.created_at.slice(0, 10)}</small>
-              <div className='user-info'>
-                <img src={userProfile.avatar_url} alt="avatar profile" />
+          <div div className='card-section flex justify-center items-center gap-[20px]'>
+            <div className={`user-info-container relative bg-[#ffffff] dark:bg-slate-700 text-[#000000] dark:text-[#ffffff] border-[1px] border-[#d0d7de] rounded-tr-[10px] rounded-br-[10px] rounded-bl-[10px] p-[30px] max-w-[550px] flex flex-col justify-start items-start gap-[15px] ${darkModeToggle && "dark"}`}>
+              <span className={`user-type absolute top-[-38px] left-[-1px] bg-[#ffffff] dark:bg-slate-700 px-[15px] py-[5px] border-[1px] border-[#d0d7de] border-b-0 rounded-tl-[10px] rounded-tr-[10px] font-semibold text-[18px]`}>{userProfile.type}</span>
+              <small className='user-created absolute top-[7px] right-[12px] text-[11px]'>Created at: {userProfile.created_at.slice(0, 10)}</small>
+              <div className='user-info flex justify-start items-center gap-[15px]'>
+                <img className='w-[100px] h-[100px] rounded-full border-[5px] border-[#dddede] dark:border-slate-400' src={userProfile.avatar_url} alt="avatar profile" />
                 <div className='user-name'>
                   <h2 className='user-h2-tag'>{userProfile.name}</h2>
                   <div className='user-additional'>
@@ -102,10 +110,21 @@ const UserProfileSearch = () => {
 
               </div>
             </div>
-
-            <div className='user-cells-container'>
+            <div className='user-cells-container flex flex-col justify-between gap-[22px]'>
               {/* Repo */}
-              <buttion onClick={() => convertURL(userProfile.repos_url)} target='__blank' className='user-cell'>
+              {/* display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
+  background-color: var(--white-color);
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  width: 200px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer; */}
+              <buttion onClick={() => convertURL(userProfile.repos_url)} target='__blank' className='user-cell flex justify-start items-center gap-[15px] bg-[#ffffff] dark:bg-slate-700 p-[10px] rounded-[10px] border-[1px] border-[d0d7de] w-[200px] text-[#000000] dark:text-[#ffffff]'>
                 <div className='cell-icons'>
                   <GoRepo />
                 </div>
@@ -115,7 +134,7 @@ const UserProfileSearch = () => {
                 </div>
               </buttion>
               {/* Followers */}
-              <buttion onClick={() => convertURL(userProfile.followers_url)} target='__blank' className='user-cell'>
+              <buttion onClick={() => convertURL(userProfile.followers_url)} target='__blank' className='user-cell flex justify-start items-center gap-[15px] bg-[#ffffff] dark:bg-slate-700 p-[10px] rounded-[10px] border-[1px] border-[d0d7de] w-[200px] text-[#000000] dark:text-[#ffffff]'>
                 <div className='cell-icons'>
                   <GoPeople />
                 </div>
@@ -125,7 +144,7 @@ const UserProfileSearch = () => {
                 </div>
               </buttion>
               {/* Following */}
-              <buttion onClick={() => convertURL(userProfile.following_url)} target='__blank' className='user-cell'>
+              <buttion onClick={() => convertURL(userProfile.following_url)} target='__blank' className='user-cell flex justify-start items-center gap-[15px] bg-[#ffffff] dark:bg-slate-700 p-[10px] rounded-[10px] border-[1px] border-[d0d7de] w-[200px] text-[#000000] dark:text-[#ffffff]'>
                 <div className='cell-icons'>
                   <GoPersonAdd />
                 </div>
@@ -138,7 +157,7 @@ const UserProfileSearch = () => {
             </div>
           </div>
         )}
-      </section>) : (
+      </section >) : (
         <p className='warning'>{errorMessage || 'Find GitHub Profiles'}</p>)
       }
     </>
